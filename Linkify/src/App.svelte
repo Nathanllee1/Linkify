@@ -1,25 +1,51 @@
 <script>
-	export let name;
+	import Login from "./Login.svelte";
+	import Link from "./Link.svelte";
+	import Profile from "./Profile.svelte";
+
+	let token = "";
+	let id = "";
+
+	const urlParams = new URLSearchParams(window.location.search);
+	let tok = urlParams.get("token");
+	id = urlParams.get("id");
+
+	if (localStorage.getItem("spotify_token")) { // add timeout logic
+		token = localStorage.getItem("spotify_token")
+		id = localStorage.getItem("id");
+	} else if (tok) {
+		token = tok;
+		localStorage.setItem("spotify_token", tok);
+		localStorage.setItem("id", id);
+		window.location = window.location.origin
+	}
+	
 </script>
 
 <main>
-	<h1>Hello {name}!</h1>
-	<p>Visit the <a href="https://svelte.dev/tutorial">Svelte tutorial</a> to learn how to build Svelte apps.</p>
+	{#if token}
+	<Profile />
+	{/if}
+	<h1>Linkify</h1>
+	<h2>Automatically queue a Spotify song to play after another song</h2>
+
+	{#if token}
+		
+		<Link/>
+	{:else}
+		<Login />
+	{/if}
 </main>
 
 <style>
 	main {
-		text-align: center;
-		padding: 1em;
-		max-width: 240px;
-		margin: 0 auto;
+		padding-left: 5%;
 	}
 
 	h1 {
-		color: #ff3e00;
-		text-transform: uppercase;
 		font-size: 4em;
 		font-weight: 100;
+		margin-bottom: 5px;
 	}
 
 	@media (min-width: 640px) {
