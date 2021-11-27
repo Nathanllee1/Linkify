@@ -6,7 +6,7 @@
 </script>
 
 <div id="profile">
-    <div>Nathan</div>
+    <div></div>
     <button on:click={logout}>Logout</button>
 </div>
 

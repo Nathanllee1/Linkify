@@ -27,7 +27,7 @@
 
 {#if song_details}
 <div id="song_container">
-    <img src={song_details.album.images[0].url} alt={song_details.name} width="100px" />
+    <img src={song_details.album.images[0].url} alt={song_details.name} width="40%" height="40%" />
     <div id="text">
         <div><b>{song_details.name}</b></div>
         <div>{song_details.artists[0].name}</div>

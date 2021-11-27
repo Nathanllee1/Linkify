@@ -1,7 +1,7 @@
 
 
 <div id="login-container">
-    <a href="/auth/login">Login with Spotify</a>
+    <a href={BACKEND_URL + `/auth/login`}>Login with Spotify</a>
 </div>
 
 <style>

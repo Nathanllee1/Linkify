@@ -12,11 +12,12 @@
         <h1>🔗</h1>
         <SongDisplay song_id={link}/>
     </div>
-
+    <!--
     <div id="configure_container" on:click={() => {enabled = !enabled}}>
         <input type="checkbox" bind:checked={enabled} />
         <h4>{enabled ? "Enabled" : "Disabled"}</h4>
     </div>
+    -->
 </div>
 
 <style>

@@ -16,7 +16,10 @@ async function initialize() {
     await mongoose.connect(uri);
     cached_users = await user_model.find();
 
+    console.log(cached_users);
+
     // TODO, put in retry loop
+    
     setInterval(() => {
         scan_and_update(cached_users);
     }, 5000)
@@ -44,7 +47,7 @@ var generateRandomString = function (length) {
 var app = express();
 
 app.get("/auth/login", (req, res) => {
-    
+    console.log("HEY")
     var scope = "user-modify-playback-state user-read-email user-read-private user-read-currently-playing";
     var state = generateRandomString(16);
 
@@ -57,7 +60,8 @@ app.get("/auth/login", (req, res) => {
     });
 
     auth_query_parameters.toString();
-
+    console.log("Redirecting", "https://accounts.spotify.com/authorize/?" +
+        auth_query_parameters.toString())
     res.redirect(
         "https://accounts.spotify.com/authorize/?" +
         auth_query_parameters.toString()
@@ -93,17 +97,17 @@ app.get("/auth/callback", (req, res) => {
                 'headers': {
                     'Authorization': 'Bearer ' + token_body.access_token
                 }
-            }; 
+            };
 
             request(options, async function (error, response, user_body) {
                 let parsed_resp = JSON.parse(user_body)
                 let id = parsed_resp.id;
                 let access_token = token_body.access_token;
                 console.log("Processing", id);
-                
-                if ((await user_model.user_model.find({ spotify_id: id })).length == 0) { // if user doesn't exist
+
+                if ((await user_model.find({ spotify_id: id })).length == 0) { // if user doesn't exist
                     console.log("Registering", id);
-                    const new_user = new user_model.user_model({
+                    const new_user = new user_model({
                         spotify_id: id,
                         token: access_token,
                         refresh_token: token_body.refresh_token,
@@ -114,7 +118,7 @@ app.get("/auth/callback", (req, res) => {
                 }
 
                 console.log("token", access_token, "id", id)
-                res.redirect(`/?token=${access_token}&id=${id}` );
+                res.redirect(`/?token=${access_token}&id=${id}`);
             });
         }
 
@@ -127,9 +131,9 @@ app.get("/links", async (req, res) => {
 
     console.log("Fetching links for", id);
 
-    let links = await user_model.user_model.find({ spotify_id: id });
-    console.log({"links":links[0].links})
-    res.json ({"links":links[0].links});
+    let links = await user_model.find({ spotify_id: id });
+    //console.log({ "links": links[0].links })
+    res.json({ "links": links[0].links });
 })
 
 app.post("/linksubmit", async (req, res) => {
@@ -138,12 +142,18 @@ app.post("/linksubmit", async (req, res) => {
     const id = req.query.id;
 
     if (link && root && id) {
-        console.log(await user_model.user_model.findOneAndUpdate({spotify_id: id}, {
-            $push: {links: {root: root, link: link}}
+        console.log(await user_model.findOneAndUpdate({ spotify_id: id }, {
+            $push: { links: { root: root, link: link } }
         }));
     }
 
-    cached_users = await user_model.user_model.find(); // update cache
+    cached_users = await user_model.find(); // update cache
+
+})
+
+app.delete("/link", async (req, res) => {
+    const link_id = req.query.link_id;
+
     
 })
 

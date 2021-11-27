@@ -6,7 +6,7 @@
     let links = [];
 
     onMount(async() => {
-        const res = await fetch(`/links?id=${localStorage.getItem("id")}`);
+        const res = await fetch(`${BACKEND_URL}/links?id=${localStorage.getItem("id")}`);
         
         links = (await res.json()).links
         

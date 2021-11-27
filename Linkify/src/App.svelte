@@ -33,13 +33,23 @@
 		
 		<Link/>
 	{:else}
+	<br>
+	<div id="signup_card">
+		<h3>Ever feel annoyed when there's two songs in an album and meant to be played together, but shuffling messes it all up?</h3>
+		<h3>Do you have songs that you always want played together?</h3>
+		<br>
+		<h2>Linkify solves this by connecting to your Spotify account and automatically queues up the song of your choice when a specific song is played.</h2>
 		<Login />
+	</div>
+		
+		
+
 	{/if}
 </main>
 
 <style>
 	main {
-		padding-left: 5%;
+		padding: 5%;
 	}
 
 	h1 {
@@ -52,5 +62,18 @@
 		main {
 			max-width: none;
 		}
+	}
+
+	#signup_card {
+		background-color: white;
+		color: black;
+		padding: 30px;
+		width: 80%;
+		border-radius: 20px;
+		margin: auto;
+	}
+
+	h3 {
+		color: grey;
 	}
 </style>
