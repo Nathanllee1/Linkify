@@ -17,9 +17,9 @@
 
 <div id="app_container" >
     
-    {#each links as {root, link}, i}
+    {#each links as {root, link, _id}, i}
     
-    <LinkItem root={root} link={link} />
+    <LinkItem root={root} link={link} id={_id} />
     {/each}
 
     <Form/>

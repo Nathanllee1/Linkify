@@ -5,6 +5,7 @@ import path from 'path';
 import mongoose from 'mongoose';
 import scan_and_update from './scan.js';
 import { user_model } from './link_schema.js';
+import { resolveSoa } from 'dns';
 
 dotenv.config();
 
@@ -12,21 +13,6 @@ const uri = `mongodb+srv://nathanlee:${process.env.MONGO_PASSWORD}@cluster0.ej9q
 const port = 5000;
 
 let cached_users;
-async function initialize() {
-    await mongoose.connect(uri);
-    cached_users = await user_model.find();
-
-    console.log(cached_users);
-
-    // TODO, put in retry loop
-    
-    setInterval(() => {
-        scan_and_update(cached_users);
-    }, 5000)
-    
-}
-
-initialize();
 
 var spotify_client_id = process.env.SPOTIFY_CLIENT_ID;
 var spotify_client_secret = process.env.SPOTIFY_CLIENT_SECRET;
@@ -146,6 +132,8 @@ app.post("/linksubmit", async (req, res) => {
             $push: { links: { root: root, link: link } }
         }));
     }
+    
+    res.status(200).send("Ok")
 
     cached_users = await user_model.find(); // update cache
 
@@ -153,13 +141,28 @@ app.post("/linksubmit", async (req, res) => {
 
 app.delete("/link", async (req, res) => {
     const link_id = req.query.link_id;
+    const user_id = req.query.user_id;
+    console.log("Deleting", link_id, "for", user_id);
 
-    
+    console.log(await user_model.updateOne({spotify_id : user_id}, {$pull: { links: {_id : link_id}}}))
+
+    res.status(200).send("Deleted");
 })
 
 
-app.listen(port, () => {
+app.listen(port, async() => {
     console.log(`Listening at http://localhost:${port}`);
+
+    await mongoose.connect(uri);
+    cached_users = await user_model.find();
+
+    console.log(cached_users.length, "Users");
+
+    // TODO, put in retry loop
+    
+    setInterval(() => {
+        scan_and_update(cached_users);
+    }, 5000)
 });
 
 app.use(express.static('Linkify/public'));

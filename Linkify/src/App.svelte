@@ -68,7 +68,7 @@
 		background-color: white;
 		color: black;
 		padding: 30px;
-		width: 80%;
+		max-width: 800px;
 		border-radius: 20px;
 		margin: auto;
 	}

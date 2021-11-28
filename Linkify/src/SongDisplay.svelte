@@ -21,8 +21,7 @@
         const res = await fetch("https://api.spotify.com/v1/tracks/" + song_id, requestOptions);
         song_details = await res.json();
 
-        console.log(song_details)
-    });
+        });
 </script>
 
 {#if song_details}
