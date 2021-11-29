@@ -5,7 +5,7 @@ import path from 'path';
 import mongoose from 'mongoose';
 import scan_and_update from './scan.js';
 import { user_model } from './link_schema.js';
-import { resolveSoa } from 'dns';
+import cors from "cors";
 
 dotenv.config();
 
@@ -29,6 +29,7 @@ var generateRandomString = function (length) {
 };
 
 var app = express();
+app.use(cors())
 
 
 
