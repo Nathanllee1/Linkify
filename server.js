@@ -98,6 +98,7 @@ app.get("/auth/callback", (req, res) => {
             };
 
             request(options, async function (error, response, user_body) {
+                console.log(user_body, error);
                 let parsed_resp = JSON.parse(user_body)
                 let id = parsed_resp.id;
                 let access_token = token_body.access_token;
