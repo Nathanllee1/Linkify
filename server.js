@@ -37,7 +37,7 @@ let spotify_redirect_uri = "http://localhost:5000/auth/callback";
 let frontend_url = "http://localhost:5000";
 
 if (process.argv[2] == "--prod") {
-    spotify_redirect_uri = "https://linkify-back.herokuapp.com/";
+    spotify_redirect_uri = "https://linkify-back.herokuapp.com/auth/callback";
     frontend_url = "https://linkify-eta.vercel.app/"
 } else {
     app.use(express.static('Linkify/public'));
