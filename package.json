@@ -6,7 +6,8 @@
   "type": "module",
   "scripts": {
     "test": "jest",
-    "start": "npx kill-port 5000 && node server.js"
+    "start": "npx kill-port 5000 && node server.js",
+    "prod": "node server.js --prod"
   },
   "author": "",
   "license": "ISC",

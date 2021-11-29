@@ -10,14 +10,12 @@ import { resolveSoa } from 'dns';
 dotenv.config();
 
 const uri = `mongodb+srv://nathanlee:${process.env.MONGO_PASSWORD}@cluster0.ej9q5.mongodb.net/myFirstDatabase?retryWrites=true&w=majority`
-const port = 5000;
+const port = process.env.PORT || 5000;
 
 let cached_users;
 
 var spotify_client_id = process.env.SPOTIFY_CLIENT_ID;
 var spotify_client_secret = process.env.SPOTIFY_CLIENT_SECRET;
-
-var spotify_redirect_uri = "http://localhost:5000/auth/callback";
 
 var generateRandomString = function (length) {
     var text = "";
@@ -31,6 +29,19 @@ var generateRandomString = function (length) {
 };
 
 var app = express();
+
+
+
+// prod and local configurations
+let spotify_redirect_uri = "http://localhost:5000/auth/callback";
+let frontend_url = "http://localhost:5000";
+
+if (process.argv[2] == "--prod") {
+    spotify_redirect_uri = "https://linkify-back.herokuapp.com/";
+    frontend_url = "https://linkify-eta.vercel.app/"
+} else {
+    app.use(express.static('Linkify/public'));
+}
 
 app.get("/auth/login", (req, res) => {
     console.log("HEY")
@@ -104,7 +115,7 @@ app.get("/auth/callback", (req, res) => {
                 }
 
                 console.log("token", access_token, "id", id)
-                res.redirect(`/?token=${access_token}&id=${id}`);
+                res.redirect(`${frontend_url}?token=${access_token}&id=${id}`);
             });
         }
 
@@ -154,15 +165,5 @@ app.listen(port, async() => {
     console.log(`Listening at http://localhost:${port}`);
 
     await mongoose.connect(uri);
-    cached_users = await user_model.find();
-
-    console.log(cached_users.length, "Users");
-
-    // TODO, put in retry loop
-    
-    setInterval(() => {
-        scan_and_update(cached_users);
-    }, 5000)
 });
 
-app.use(express.static('Linkify/public'));
