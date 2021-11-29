@@ -6,6 +6,7 @@ import mongoose from 'mongoose';
 import { user_model } from './link_schema.js';
 
 
+
 export default async function scan_and_update(cached_users) {
 
     for (const user of cached_users) {
@@ -13,7 +14,7 @@ export default async function scan_and_update(cached_users) {
         let token = user.token;
         let _id = user._id;
 
-        if (Date.now() - user.last_refresh > 3599 * 1000) { // 3600 is when the token expires
+        if (Date.now() - user.last_refresh > 3599 * 1000 || !user.last_refresh) { // 3600 is when the token expires
             console.log("Refreshing token for", user.spotify_id);
             token = await refresh_tokens(user.refresh_token);
 
@@ -24,7 +25,7 @@ export default async function scan_and_update(cached_users) {
         //console.log("id", user.spotify_id, "token:", token);
 
         try {
-            const [song_id, song_length] = await get_currently_playing(token);
+            const [song_id, song_length] = await get_currently_playing(token, user.refresh_token);
 
             if (song_id) {
                 for (const link of user.links) {
@@ -39,6 +40,7 @@ export default async function scan_and_update(cached_users) {
                             // set some "gracetime" after it queues so it doesn't infinitely queue
                             const gracetime = song_length + 10000;
 
+                            console.log("gracelength", gracetime);
                             
                             await user_model.findOneAndUpdate(
                                 {"_id": _id, "links._id": link_id},

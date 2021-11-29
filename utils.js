@@ -29,7 +29,7 @@ async function refresh_tokens(refresh_token) {
     return (token);
 }
 
-async function get_currently_playing(token) {
+async function get_currently_playing(token, refresh_token) {
     let requestOptions = {
         method: 'GET',
         headers: {
@@ -41,6 +41,8 @@ async function get_currently_playing(token) {
     const res = await fetch("https://api.spotify.com/v1/me/player/currently-playing", requestOptions);
 
     if (!res.ok) {
+
+        
         console.log(`An error has occured: ${res.status}`);
         console.log(await res.json())
 
@@ -48,7 +50,7 @@ async function get_currently_playing(token) {
     }
 
     if (res.status == 204) // empty
-        return (null)
+        return ([null, null])
 
     const json = await res.json() 
 
